@@ -94,15 +94,6 @@ jobs:
           TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         run: python main.py
 
-      - name: 上传截图
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots-${{ github.run_number }}
-          path: output/screenshots/*.png
-          retention-days: 7
-          if-no-files-found: ignore
-
       # --- 新增的防暂停代码开始 ---
       - name: Commit time.txt to repo
         if: success()
@@ -130,16 +121,14 @@ jobs:
           fi
       # --- 新增的防暂停代码结束 ---
 
-      - name: Commit time.txt to repo
+      - name: 上传截图
         if: always()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add time.txt
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "⏱️ 更新时间文件"
-          git pull --rebase origin main || true
-          git push origin HEAD:main
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ github.run_number }}
+          path: output/screenshots/*.png
+          retention-days: 7
+          if-no-files-found: ignore
 
       # - name: 清理历史运行记录
       #   if: always()
